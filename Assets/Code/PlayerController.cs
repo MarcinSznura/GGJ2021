@@ -19,6 +19,9 @@ public class PlayerController : MonoBehaviour
 
     private CharacterController controller = null;
     private Collider playerCollider = null;
+    private Animator animator = null;
+
+    public Vector3 PlayerForward => model.transform.forward;
 
     private void Awake()
     {
@@ -33,6 +36,8 @@ public class PlayerController : MonoBehaviour
 
         TryGetComponent(out controller);
         TryGetComponent(out playerCollider);
+
+        animator = GetComponentInChildren<Animator>();
     }
 
     private void Start()
@@ -49,6 +54,8 @@ public class PlayerController : MonoBehaviour
         Vector3 _move = transform.right * _x + transform.forward * _z;
 
         controller.Move(_move * speed * Time.deltaTime);
+
+        animator.SetFloat("Walk", _move.magnitude);
 
         if (Input.GetButtonDown("Jump"))
         {

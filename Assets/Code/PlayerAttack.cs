@@ -4,12 +4,40 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
+    public static PlayerAttack Instance = null;
+
+    [HideInInspector] public bool canSpecialAttack = true;
+
+    [Header("Attack")]
+    public int AttackDamage = 1;
     [SerializeField] GameObject[] attackStage = new GameObject[0];
     [SerializeField] float timeBeetweenAttackStages = 1f;
 
-    private WaitForSeconds waitForTimeBetweenAttacks = null;
+    [Header("Special attack")]
+    [SerializeField] GameObject specialPrefab = null;
+    [SerializeField] GameObject specialPrefabToHide = null;
+    [SerializeField] Transform specialAttackSpawnPosition = null;
+    public float SpecialAttackDistance = 1f;
+    public int SpecialAttackDamage = 1;
+
+    private Animator animator = null;
+    private WaitForSeconds waitBetweenAttacks = null;
 
     private bool canAttack = true;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+
+        animator = GetComponentInChildren<Animator>();
+    }
 
     private void Start()
     {
@@ -18,7 +46,7 @@ public class PlayerAttack : MonoBehaviour
             attackStage[i].SetActive(false);
         }
 
-        waitForTimeBetweenAttacks = new WaitForSeconds(timeBeetweenAttackStages);
+        waitBetweenAttacks = new WaitForSeconds(timeBeetweenAttackStages);
     }
 
     private void Update()
@@ -28,7 +56,14 @@ public class PlayerAttack : MonoBehaviour
             canAttack = false;
 
             StartCoroutine(attack());
-            StartCoroutine(attackCoroutine());
+            StartCoroutine(attackCooldownCoroutine());
+        }
+
+        if (canSpecialAttack && Input.GetButtonDown("Special"))
+        {
+            canSpecialAttack = false;
+
+            executeSpecialAttack();
         }
     }
 
@@ -38,7 +73,7 @@ public class PlayerAttack : MonoBehaviour
         {
             attackStage[i].SetActive(true);
 
-            yield return waitForTimeBetweenAttacks;
+            yield return waitBetweenAttacks;
         }
 
         yield return null;
@@ -49,7 +84,28 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    private IEnumerator attackCoroutine()
+    private void executeSpecialAttack()
+    {
+        StartCoroutine(special());
+    }
+
+    private IEnumerator special()
+    {
+        animator.SetTrigger("Special");
+        canSpecialAttack = false;
+
+        yield return new WaitForSeconds(0.2f);
+
+        Instantiate(specialPrefab, specialAttackSpawnPosition.position, Quaternion.identity, null); //TODO: objectPool after jam?
+        specialPrefabToHide.SetActive(false);
+    }
+
+    public void OnSpecialReturn()
+    {
+        specialPrefabToHide.SetActive(true);
+        canSpecialAttack = true;
+    }
+    private IEnumerator attackCooldownCoroutine()
     {
         yield return new WaitForSeconds(2f);
 
