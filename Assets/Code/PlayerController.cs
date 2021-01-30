@@ -18,10 +18,12 @@ public class PlayerController : MonoBehaviour
     private WaitForSeconds dashCooldownTime = null;
 
     private CharacterController controller = null;
-    private Collider playerCollider = null;
     private Animator animator = null;
+    private PlayerHealth health = null;
+    private Collider playerCollider = null;
 
     public Vector3 PlayerForward => model.transform.forward;
+    public PlayerHealth PlayerHealth => health;
 
     private void Awake()
     {
@@ -35,6 +37,7 @@ public class PlayerController : MonoBehaviour
         }
 
         TryGetComponent(out controller);
+        TryGetComponent(out health);
         TryGetComponent(out playerCollider);
 
         animator = GetComponentInChildren<Animator>();
@@ -42,6 +45,11 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        if (PlayerPersistantStats.Instance != null)
+        {
+            maxDashNumber = maxDashNumber + PlayerPersistantStats.Instance.AdditionalDashNumber;
+        }
+
         dashNumberLeft = maxDashNumber;
         dashCooldownTime = new WaitForSeconds(dashCooldownDurations);
     }
@@ -68,9 +76,7 @@ public class PlayerController : MonoBehaviour
             if (dashNumberLeft > 0)
             {
                 dashNumberLeft--;
-                gameObject.layer = LayerMask.NameToLayer("Dash");
-                controller.Move(model.transform.forward * dashDistance);
-                gameObject.layer = LayerMask.NameToLayer("Default");
+                StartCoroutine(dash());
             }
         }
 
@@ -78,6 +84,24 @@ public class PlayerController : MonoBehaviour
         {
             model.transform.rotation = Quaternion.LookRotation(_move);
         }
+    }
+
+    private IEnumerator dash()
+    {
+        animator.SetTrigger("Dash");
+
+        health.isInvulnerable = true;
+        speed = speed * 3f;
+
+        yield return new WaitForSeconds(0.2f);
+
+        health.isInvulnerable = false;
+        speed = speed / 3f;
+
+        playerCollider.enabled = false;
+        playerCollider.enabled = true;
+
+        animator.SetTrigger("DashEnd");
     }
 
     private IEnumerator dashCooldown()

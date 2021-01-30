@@ -6,12 +6,10 @@ public class PlayerAttack : MonoBehaviour
 {
     public static PlayerAttack Instance = null;
 
-    [HideInInspector] public bool canSpecialAttack = true;
-
     [Header("Attack")]
     public int AttackDamage = 1;
-    [SerializeField] GameObject[] attackStage = new GameObject[0];
-    [SerializeField] float timeBeetweenAttackStages = 1f;
+    [SerializeField] GameObject attackArea = null;
+    [SerializeField] float timeToHoldDamageArea = 1f;
 
     [Header("Special attack")]
     [SerializeField] GameObject specialPrefab = null;
@@ -19,6 +17,9 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] Transform specialAttackSpawnPosition = null;
     public float SpecialAttackDistance = 1f;
     public int SpecialAttackDamage = 1;
+
+    private int maxSpecialNumber = 0;
+    private int currentSpecialNumber = 0;
 
     private Animator animator = null;
     private WaitForSeconds waitBetweenAttacks = null;
@@ -41,12 +42,12 @@ public class PlayerAttack : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 0; i < attackStage.Length; i++)
-        {
-            attackStage[i].SetActive(false);
-        }
+        attackArea.SetActive(false);
 
-        waitBetweenAttacks = new WaitForSeconds(timeBeetweenAttackStages);
+        maxSpecialNumber = PlayerPersistantStats.Instance == null ? 1 : 1 + PlayerPersistantStats.Instance.AdditionalSpecialNumber;
+        currentSpecialNumber = maxSpecialNumber;
+
+        waitBetweenAttacks = new WaitForSeconds(timeToHoldDamageArea);
     }
 
     private void Update()
@@ -59,9 +60,9 @@ public class PlayerAttack : MonoBehaviour
             StartCoroutine(attackCooldownCoroutine());
         }
 
-        if (canSpecialAttack && Input.GetButtonDown("Special"))
+        if (currentSpecialNumber > 0 && Input.GetButtonDown("Special"))
         {
-            canSpecialAttack = false;
+            currentSpecialNumber--;
 
             executeSpecialAttack();
         }
@@ -69,19 +70,13 @@ public class PlayerAttack : MonoBehaviour
 
     private IEnumerator attack()
     {
-        for (int i =0; i< attackStage.Length;i++)
-        {
-            attackStage[i].SetActive(true);
+        animator.SetTrigger("Attack");
 
-            yield return waitBetweenAttacks;
-        }
+        attackArea.SetActive(true);
 
-        yield return null;
+        yield return waitBetweenAttacks;
 
-        for (int i = 0; i < attackStage.Length; i++)
-        {
-            attackStage[i].SetActive(false);
-        }
+        attackArea.SetActive(false);
     }
 
     private void executeSpecialAttack()
@@ -92,7 +87,6 @@ public class PlayerAttack : MonoBehaviour
     private IEnumerator special()
     {
         animator.SetTrigger("Special");
-        canSpecialAttack = false;
 
         yield return new WaitForSeconds(0.2f);
 
@@ -103,7 +97,7 @@ public class PlayerAttack : MonoBehaviour
     public void OnSpecialReturn()
     {
         specialPrefabToHide.SetActive(true);
-        canSpecialAttack = true;
+        currentSpecialNumber++;
     }
     private IEnumerator attackCooldownCoroutine()
     {

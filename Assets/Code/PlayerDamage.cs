@@ -16,6 +16,12 @@ public class PlayerDamage : MonoBehaviour
         if (other.TryGetComponent(out EnemyHealth _health))
         {
             int _damage = damageType == DamageType.Attack ? PlayerAttack.Instance.AttackDamage : PlayerAttack.Instance.SpecialAttackDamage;
+
+            if (PlayerPersistantStats.Instance != null)
+            {
+                _damage += PlayerPersistantStats.Instance.AdditionalAttackDamage;
+            }
+
             _health.TakeDamage(_damage);
         }
     }

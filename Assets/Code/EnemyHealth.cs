@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class EnemyHealth : Health
 {
+    public System.Action<EnemyHealth> OnEnemyDeath = null;
+
     [SerializeField] Slider healthBarSlider = null;
 
     protected override void Start()
@@ -20,6 +22,13 @@ public class EnemyHealth : Health
         base.TakeDamage(_damageValue);
 
         updateHealthBar();
+    }
+
+    protected override void die()
+    {
+        base.die();
+
+        OnEnemyDeath?.Invoke(this);
     }
 
     protected void updateHealthBar()

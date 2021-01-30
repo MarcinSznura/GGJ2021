@@ -6,6 +6,7 @@ public class Health : MonoBehaviour
 {
     [SerializeField] protected int maxHealth = 1;
     protected int currentHealth = 1;
+    public bool isInvulnerable = false;
 
     public int CurrentHealth => currentHealth;
 
@@ -16,6 +17,11 @@ public class Health : MonoBehaviour
 
     public virtual void TakeDamage(int _damageValue)
     {
+        if (isInvulnerable)
+        {
+            return;
+        }
+
         currentHealth -= _damageValue;
 
         if (currentHealth <= 0)

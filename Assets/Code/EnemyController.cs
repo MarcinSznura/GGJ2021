@@ -5,11 +5,22 @@ using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
+    [SerializeField] ParticleSystem damageAreaParticle = null;
+
+    [SerializeField] float timeToWaitAfterAttack = 0f;
+    [SerializeField] float timeToChargeAttack = 0f;
+    [SerializeField] float distanceToAttack = 3f;
+
+    [SerializeField] GameObject damageArea = null;
+    [SerializeField] float timeToHoldDamageArea = 0f;
+
     private PlayerController player = null;
     private NavMeshAgent navMeshAgent = null;
     private EnemyHealth health = null;
 
     private bool canAttack = true;
+    private bool isAttacking = false;
+    private bool isWaiting = false;
 
     private void Awake()
     {
@@ -37,6 +48,8 @@ public class EnemyController : MonoBehaviour
         navMeshAgent.Warp(gameObject.transform.position);
 
         StartCoroutine(handleEnemy());
+
+        damageArea.SetActive(false);
     }
 
 
@@ -44,30 +57,34 @@ public class EnemyController : MonoBehaviour
     {
         while (health.CurrentHealth > 0)
         {
-            if (Vector3.Distance(transform.position, player.transform.position) > 3f)
+            while (Vector3.Distance(transform.position, player.transform.position) > distanceToAttack)
             {
                 MoveTo(player.transform.position);
+
+                yield return null;
             }
-            else
-            {
-                Stop();
-                
-                if (canAttack)
-                {
-                    attack();
-                }
-            }
+
+            Stop();
+
+            yield return new WaitForSeconds(timeToChargeAttack);
+
+            StartCoroutine(attack());
+
+            yield return new WaitForSeconds(timeToWaitAfterAttack);
 
             yield return null;
         }
-
-
     }
 
-    private void attack() //TODO make EnemyAttack from this
+    private IEnumerator attack()
     {
-        player.GetComponent<PlayerHealth>().TakeDamage(1);
-        canAttack = false;
+        damageArea.SetActive(true);
+        damageAreaParticle.Play();
+
+        yield return new WaitForSeconds(timeToHoldDamageArea);
+
+        damageAreaParticle.Stop();
+        damageArea.SetActive(false);
     }
 
     public void MoveTo(Vector3 _destination)
