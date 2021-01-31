@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class GameplayUI : MonoBehaviour
 {
@@ -32,6 +33,14 @@ public class GameplayUI : MonoBehaviour
         PlayerController.Instance.PlayerHealth.OnPlayerDeath += showGameOverScreen;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(0);
+        }
+    }
+
     private void OnDestroy()
     {
         PlayerController.Instance.PlayerHealth.OnPlayerDeath -= showGameOverScreen;
@@ -39,7 +48,15 @@ public class GameplayUI : MonoBehaviour
 
     public void UpdateUI(int _playerHP, int _maxplayerHP)
     {
-        playerHP.text = _playerHP.ToString() + "  " + _maxplayerHP;
+        if (_playerHP < 10)
+        {
+            playerHP.text = "0" + _playerHP.ToString() + "  " + _maxplayerHP;
+        }
+        else
+        {
+            playerHP.text = _playerHP.ToString() + "  " + _maxplayerHP;
+        }
+
         healthBarSlider.maxValue = _maxplayerHP;
         healthBarSlider.value = _playerHP;
     }
@@ -90,5 +107,17 @@ public class GameplayUI : MonoBehaviour
         PlayerPersistantStats.Instance.AdditionalAttackDamage++;
         PlayerPersistantStats.Instance.PlayerPreviousHealth = PlayerController.Instance.PlayerHealth.CurrentHealth;
         PlayerPersistantStats.Instance.LoadNextLevel();
+    }
+
+    public void StartLoadingMainMenu()
+    {
+        StartCoroutine(backToMainMenu());
+    }
+
+    private IEnumerator backToMainMenu()
+    {
+        yield return new WaitForSeconds(3f);
+
+        SceneManager.LoadScene(0);
     }
 }

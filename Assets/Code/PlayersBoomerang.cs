@@ -20,16 +20,16 @@ public class PlayersBoomerang : MonoBehaviour
         while (transform.position != target)
         {
             transform.position = Vector3.MoveTowards(transform.position, target, Speed * Time.deltaTime);
-            transform.Rotate(Vector3.up, 3f);
+            transform.Rotate(Vector3.up, 30f);
             yield return null;
         }
 
         Vector3 _offset = PlayerController.Instance.transform.position - transform.position;
 
-        while (_offset.sqrMagnitude > 0.01f)
+        while (_offset.sqrMagnitude > 0.09f)
         {
             transform.position = Vector3.MoveTowards(transform.position, PlayerController.Instance.transform.position, Speed * Time.deltaTime);
-            transform.Rotate(Vector3.up, 3f);
+            transform.Rotate(Vector3.up, 30f);
 
             yield return null;
 

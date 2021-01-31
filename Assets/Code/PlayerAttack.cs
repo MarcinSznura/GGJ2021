@@ -67,10 +67,14 @@ public class PlayerAttack : MonoBehaviour
 
             executeSpecialAttack();
         }
-
-        if (currentSpecialNumber <= 0)
+        
+        if (currentSpecialNumber <= 0)//TODO do this on throw, no time now 
         {
             specialPrefabToHide.SetActive(false);
+        }
+        else
+        {
+            specialPrefabToHide.SetActive(true);
         }
     }
 
