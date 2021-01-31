@@ -44739,6 +44739,10 @@ PrefabInstance:
       propertyPath: ShapeModule.radiusThickness
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5994272389380308562, guid: 036f1c69083605b4e998a2d635457913, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 3ae1fc38d1b3f914b9fb5c9759d715bf, type: 2}
     - target: {fileID: 6907695609698529888, guid: 036f1c69083605b4e998a2d635457913, type: 3}
       propertyPath: m_Name
       value: EnemyBurst

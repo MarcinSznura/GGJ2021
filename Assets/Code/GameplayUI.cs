@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameplayUI : MonoBehaviour
 {
+    [SerializeField] Slider healthBarSlider = null;
+
     [SerializeField] TextMeshProUGUI playerHP = null;
     [SerializeField] GameObject gameOverGameObject = null;
     [SerializeField] GameObject victoryScreenGameObject = null;
@@ -35,7 +39,9 @@ public class GameplayUI : MonoBehaviour
 
     public void UpdateUI(int _playerHP, int _maxplayerHP)
     {
-        playerHP.text = "HP: " + _playerHP.ToString() + "/" + _maxplayerHP;
+        playerHP.text = _playerHP.ToString() + "  " + _maxplayerHP;
+        healthBarSlider.maxValue = _maxplayerHP;
+        healthBarSlider.value = _playerHP;
     }
 
     private void showGameOverScreen()
@@ -50,27 +56,39 @@ public class GameplayUI : MonoBehaviour
 
     public void ShowVictoryScreen()
     {
-        if (victoryScreenGameObject != null)
+        if (SceneManager.GetActiveScene().buildIndex != 4)
         {
-            victoryScreenGameObject.SetActive(true);
+            if (victoryScreenGameObject != null)
+            {
+                victoryScreenGameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            PlayerPersistantStats.Instance.RestartAdditionalStats();
+            SceneManager.LoadScene(5);
         }
     }
 
     public void AdditionalDash()
     {
         PlayerPersistantStats.Instance.AdditionalDashNumber++;
+        PlayerPersistantStats.Instance.PlayerPreviousHealth = PlayerController.Instance.PlayerHealth.CurrentHealth;
         PlayerPersistantStats.Instance.LoadNextLevel();
+        
     }
 
     public void AdditionalSpecial()
     {
         PlayerPersistantStats.Instance.AdditionalSpecialNumber++;
+        PlayerPersistantStats.Instance.PlayerPreviousHealth = PlayerController.Instance.PlayerHealth.CurrentHealth;
         PlayerPersistantStats.Instance.LoadNextLevel();
     }
 
     public void AdditionalDamage()
     {
         PlayerPersistantStats.Instance.AdditionalAttackDamage++;
+        PlayerPersistantStats.Instance.PlayerPreviousHealth = PlayerController.Instance.PlayerHealth.CurrentHealth;
         PlayerPersistantStats.Instance.LoadNextLevel();
     }
 }

@@ -8,7 +8,8 @@ public class PlayerPersistantStats : MonoBehaviour
     public int AdditionalDashNumber = 0;
     public int AdditionalSpecialNumber = 0;
     public int AdditionalAttackDamage = 0;
-
+    public int PlayerPreviousHealth = 0;
+    
     private int currentLevel = 1;
 
     private void Awake()
@@ -34,6 +35,7 @@ public class PlayerPersistantStats : MonoBehaviour
     {
         currentLevel = 0;
 
+        PlayerPreviousHealth = 0;
         AdditionalAttackDamage = 0;
         AdditionalDashNumber = 0;
         AdditionalSpecialNumber = 0;

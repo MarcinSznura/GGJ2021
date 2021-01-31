@@ -9,6 +9,7 @@ public class PlayerAttack : MonoBehaviour
     [Header("Attack")]
     public int AttackDamage = 1;
     [SerializeField] GameObject attackArea = null;
+    [SerializeField] float timeBeforeDamageArea = 1f;
     [SerializeField] float timeToHoldDamageArea = 1f;
 
     [Header("Special attack")]
@@ -66,11 +67,18 @@ public class PlayerAttack : MonoBehaviour
 
             executeSpecialAttack();
         }
+
+        if (currentSpecialNumber <= 0)
+        {
+            specialPrefabToHide.SetActive(false);
+        }
     }
 
     private IEnumerator attack()
     {
         animator.SetTrigger("Attack");
+
+        yield return new WaitForSeconds(timeBeforeDamageArea);
 
         attackArea.SetActive(true);
 
@@ -91,12 +99,10 @@ public class PlayerAttack : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         Instantiate(specialPrefab, specialAttackSpawnPosition.position, Quaternion.identity, null); //TODO: objectPool after jam?
-        specialPrefabToHide.SetActive(false);
     }
 
     public void OnSpecialReturn()
     {
-        specialPrefabToHide.SetActive(true);
         currentSpecialNumber++;
     }
     private IEnumerator attackCooldownCoroutine()

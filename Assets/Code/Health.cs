@@ -9,6 +9,7 @@ public class Health : MonoBehaviour
     public bool isInvulnerable = false;
 
     public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
 
     protected virtual void Start()
     {

@@ -8,7 +8,13 @@ public class PlayerHealth : Health
 
     protected override void Start()
     {
-        base.Start();
+        currentHealth = PlayerPersistantStats.Instance.PlayerPreviousHealth;
+
+        if (currentHealth == 0)
+        {
+            currentHealth = maxHealth;
+        }
+
         FindObjectOfType<GameplayUI>().UpdateUI(currentHealth, maxHealth);
     }
 

@@ -83,10 +83,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b50b22128e3a59498e8fe539e591f0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canSpecialAttack: 1
   AttackDamage: 3
   attackArea: {fileID: 8395296634930012718}
-  timeToHoldDamageArea: 1
+  timeBeforeDamageArea: 0.5
+  timeToHoldDamageArea: 0.5
   specialPrefab: {fileID: 5427720827875092539, guid: a1fee620d9638724a9831838e1090f79, type: 3}
   specialPrefabToHide: {fileID: 6423035393032725052}
   specialAttackSpawnPosition: {fileID: 7435770167492578447}
@@ -104,7 +104,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 914ded2df7fdd80459780dd6d5dc1130, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
+  maxHealth: 20
+  isInvulnerable: 0
 --- !u!54 &3803160056588997302
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -516,9 +517,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7435770168380887340}
     m_Modifications:
+    - target: {fileID: 2050885621070170762, guid: 11e17020d645ff347b2a3a0b5cec1c2e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.34
+      objectReference: {fileID: 0}
     - target: {fileID: 4551238314747108630, guid: 11e17020d645ff347b2a3a0b5cec1c2e, type: 3}
       propertyPath: m_Name
       value: prefab_PlayerAttack
+      objectReference: {fileID: 0}
+    - target: {fileID: 5103617795294964228, guid: 11e17020d645ff347b2a3a0b5cec1c2e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5862176432901111977, guid: 11e17020d645ff347b2a3a0b5cec1c2e, type: 3}
       propertyPath: m_LocalPosition.x
